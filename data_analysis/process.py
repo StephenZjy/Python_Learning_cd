@@ -2,13 +2,14 @@ import shutil
 from pathlib import *
 import numpy as np
 import pandas as pd
-import itertools
 from matplotlib import pyplot as plt
 import seaborn as sns
 
+
 def get_file_path_list(dir_path, file_types=['*.bin']):
-    file_path = [Path(dir_path).rglob(file_type) for file_type in file_types]
-    file_path_list = itertools.chain.from_iterable(file_path)
+    file_path_list = [file
+                 for file_type in file_types
+                 for file in Path(dir_path).rglob(file_type)]
     file_path_list = sorted(list(file_path_list))
 
     return file_path_list
@@ -22,13 +23,26 @@ def parse_file_path(dir_path, file_path):
 
 
 def get_components(df):
+    df_filled = df.fillna('')
+    for index, row in df_filled.iterrows():
+        for col in df_filled.columns:
+            if isinstance(row[col], str) and '.bin' in row[col]:
+                df_filled.at[index, col] = str(df.at[index, col]).split('_')[0]
+
+    deduplicated_df = df_filled.groupby(0).apply(deduplicate_columns).reset_index(drop=True)
+    deduplicated_df = deduplicated_df.applymap(lambda x: ', '.join(x))
+    deduplicated_df.to_csv('result_deduplicated.csv', index=False)
+
+    return deduplicated_df
 
 
+def deduplicate_columns(group):
+    deduplicated_group = group.apply(lambda col: col.drop_duplicates().tolist(), axis=0)
+    return deduplicated_group
 
 
-
-def get_ajusted_file_path(dir_path, df):
-    column_order = input('输入列号定义文件层级(例如 /0/1/2/4_5)：')
+def get_ajusted_file_path(dir_path, df, column_order):
+    # column_order = input('输入列号定义文件层级(例如 /0/1/2/4_5)：')
     symbols = [column_order[i] for i in range(len(column_order)) if i%2==0]
     numbers = [int(column_order[j]) for j in  range(len(column_order)) if j%2!=0]
     df = df.reindex(columns=numbers)
@@ -36,7 +50,7 @@ def get_ajusted_file_path(dir_path, df):
     path_list = [''.join([symbol + component for component, symbol in zip(components, symbols)]) for components in df_list]
     ajusted_file_path_list = [dir_path + '_ajusted' + path for path in path_list]
 
-    return  ajusted_file_path_list
+    return ajusted_file_path_list
 
 
 def ajust_folder_level(original_path_list, ajusted_path_list):
@@ -110,7 +124,7 @@ def get_duration(dir_path):
         duration_info.append([project, duration])
 
     df_duration = pd.DataFrame(duration_info, columns=['project', 'duration'])
-    df_duration.to_csv('result.csv')
+    df_duration.to_csv('result.csv', index=False)
 
 
 def anaylze_result():
@@ -147,7 +161,7 @@ def visualize_result(csv_file):
 
 
 def main():
-    dir_path = '/home/zhaojiayin/workspace/data/database/Backup_data/DVS'
+    dir_path = '/home/zhaojiayin/workspace/data/database/Backup_data/DVS/Gesture_control/data/speck-2f/20230418'
 
     file_path_list = get_file_path_list(dir_path)
     path_components_list = []
@@ -155,19 +169,20 @@ def main():
     for file_path in file_path_list:
         path_components = parse_file_path(dir_path, file_path)
         path_components_list.append(path_components)
-    df_components = pd.DataFrame(path_components_list)
 
+    df_components = pd.DataFrame(path_components_list)
+    df_components.to_csv('result.csv', index=False)
 
     '''获取文件层级要素'''
     get_components(df_components)
 
-    '''调整文件层级'''
+    # '''调整文件层级'''
     # ajusted_file_path_list = get_ajusted_file_path(dir_path, df_components)
     # ajust_folder_level(file_path_list, ajusted_file_path_list)
     #
     # '''修改文件名'''
     # replace_mapping = {
-    #     'c04':'c01'
+    #     'c01':'c0001'
     # }
     # rename_file(replace_mapping, dir_path)
 
