@@ -1,0 +1,34 @@
+cur_id: 127
+file_dir: ./images
+lines:
+  line01:
+    color: 60, 20, 220
+    id: 0, 1
+  line02:
+    color: 60, 20, 220
+    id: 1, 2
+  line03:
+    color: 214, 112, 218
+    id: 0, 3
+  line04:
+    color: 214, 112, 218
+    id: 3, 4
+  line05:
+    color: 235, 206, 135
+    id: 0, 5
+  line06:
+    color: 235, 206, 135
+    id: 5, 6
+  line07:
+    color: 127, 255, 0
+    id: 0, 7
+  line08:
+    color: 127, 255, 0
+    id: 7, 8
+  line09:
+    color: 0, 255, 255
+    id: 0, 9
+  line10:
+    color: 0, 255, 255
+    id: 9, 10
+max_pts_num: 11
