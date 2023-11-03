@@ -1,45 +1,38 @@
 import sys
 
-from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+
 from ui import Ui_MainWindow
 from csvOperator import *
 from register_window import Ui_register
 from login_window import Ui_login
+from utils import show_dialog
 
 
 class Mywindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(Mywindow, self).__init__()
+        self.username = None
+        self.password = None
+        self.tel = None
+        self.email = None
         self.setupUi(self)
 
-    def match_info(self):
+    def match(self):
         username_text = self.username_textEdit.toPlainText()
         password_text = self.password_textEdit.toPlainText()
-
-        pd_info = read_csv(csv_file='user_info.csv')
-        if username_text in pd_info['username'].values:
-            user_info = pd_info[pd_info['username'] == username_text]
-            username = str(user_info['username'].values[0])
-            password = str(user_info['password'].values[0])
-            tel = str(user_info['tel'].values[0])
-            email = str(user_info['email'].values[0])
-            if password == password_text:
-                return username, tel, email
+        df_info = read_csv(csv_file='user_info.csv')
+        if username_text in df_info['username'].values:
+            self.username, self.password, self.tel, self.email = match_username(df_info, username_text)
+            if self.password == password_text:
+                return True
             else:
-                self.show_dialog('提示', '密码不正确')
+                show_dialog(self, '提示', '密码不正确')
         else:
-            self.show_dialog('提示', '用户名不存在')
-
-    def show_dialog(self, title, text):
-        msg = QMessageBox(self)
-        msg.setIcon(QMessageBox.Warning)
-        msg.setWindowTitle(title)
-        msg.setText(text)
-        msg.exec_()
+            show_dialog(self, '提示', '用户名不存在')
 
     def login(self):
-        if self.match_info():
+        if self.match():
             login_window = Ui_login(self)
             login_window.show()
             self.close()
@@ -54,5 +47,6 @@ class Mywindow(QMainWindow, Ui_MainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    -
+    window = Mywindow()
+    window.show()
     sys.exit(app.exec_())
