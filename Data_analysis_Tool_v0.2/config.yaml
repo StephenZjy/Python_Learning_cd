@@ -1,0 +1,22 @@
+# 文件名和筛选条件
+AllRun_file: '按日期查询run信息，包括平均数，_1Kb_Num_2Kb_Num_2024_01_19.csv'
+keyword_FileName: 'Y000'
+keyword_NP: ['DPN']
+keyword_columns: ['FileName', 'NP', 'CYCLE', 'Voltage', 'Aperture', 'total_avarage_identity', 'total_sub_len', 'subs_more_than_80_pr', 'subs_more_than_83_pr', 'subs_more_than_85_pr', 'subs_more_than_88_pr', 'subs_more_than_90_pr', 'valid_reads_num', 'invalid_reads_num', 'total_matched_reads_num', 'total_reads_len', 'total_valid_reads_len', 'total_valid_reads_coverage', 'global_min_len', 'global_max_len', 'global_median_len', 'global_mean_len', 'average_linker_speed', 'average_basecall_lifetime', 'single_pore', 'multi_pore', 'suspected', 'appearance']
+
+# 分析文件类型 (一个run含多个barcode则填入)
+analysis_file_type: 
+
+# 分析文件
+run_file_1: ['L617', 'DPN2674-E-Coli-PN-L617-N042-N101-6Plinker-十烷-60min.csv']
+run_file_2: ['L617', 'DPN2674-E-Coli-PN-L617-N042-N101-6Plinker-十烷-30min.csv']
+run_file_3: ['L844', 'DPN2675-E-Coli-PN-L844-N042-N101-6Plinker-交联磷脂-60min.csv']
+run_file_4: ['L844', 'DPN2675-E-Coli-PN-L844-N042-N101-6Plinker-十烷-30min.csv']
+
+# 对照组的标签/条件 (可以理解为文件夹名)
+label: L617-L844
+
+# 分析条件 (不设条件则将数字部分填为0)
+coverage: '80%'
+read_len: '1K'
+LT: '30min'
